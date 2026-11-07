@@ -93,7 +93,7 @@ T{next_extruder}
 wget -O - https://raw.githubusercontent.com/viesturz/klipper-toolchanger/main/install.sh | bash
 ```
 
-将 MH 文件夹中的所有文件 以及 myvariables.cfg  放入 Klipper 配置文件中
+将 VT-M 文件夹中的所有文件 以及 myvariables.cfg  放入 Klipper 配置文件中
 
 ### Klipper 配置文件目录说明
 
@@ -103,14 +103,14 @@ Klipper/
 ├── myvariables.cfg                # SAVE_VARIABLE 持久化数据：工具偏移、当前工具及统计值
 ├── ebb.cfg                        # EBB MCU、板载温度传感器和 LIS2DW 加速度计
 ├── eddy.cfg                       # Eddy 探头、Z 倾斜调整和热床网格
-└── MH/
+└── VT-M/
     ├── calibration.cfg            # 工具高度/偏移校准和保存校准结果的宏
     ├── dock_locate_calibrate.cfg  # 多热端停靠坞位置校准（非必须）
-    ├── eddy_tap_z.cfg             # 使用 Eddy TAP 校准各工具的 Z 偏移（非必须）
     ├── extruder.cfg               # E0–E3 挤出机、加热器和驱动器配置
     ├── fan.cfg                    # 模型冷却风扇、热端风扇和停靠坞风扇
-    ├── macro.cfg                  # 温度、暂停/恢复、取消打印等通用宏
-    ├── setting                    # 备用文件
+    ├── nozzle.cfg                 # 擦嘴
+    ├── print_macro.cfg            # 打印流程相关宏
+    ├── tool_macro.cfg             # 工具宏
     └── swap.cfg                   # 多热端换刀、停靠位置、传感器检查和故障恢复
 ```
 新增的特色功能
@@ -119,7 +119,7 @@ Klipper/
 3. 在获取和卸载热端时，如果出错会进行第二次尝试，再次失败会自动进行XY归位校准，再次尝试，如依然失败则停止运行，如在打印中则触发暂停，手动放置好热端之后，再手动执行开始打印。
 4. 归位时，先进行Y归位，再进行X归位，避免碰撞停靠坞。进行XYZ偏移校准时也是如此。
 
-`printer.cfg` 通过`[include MH/*.cfg]` 加载 MH 文件夹中的所有配置文件，`myvariables.cfg` 为保存变量的文件，无须引入
+`printer.cfg` 通过`[include VT-M/*.cfg]` 加载 VT-M 文件夹中的所有配置文件，`myvariables.cfg` 为保存变量的文件，无须引入
 
 `calibration.cfg ` 需配置 对刀器 pin 以及 对刀器坐标
 
@@ -143,7 +143,7 @@ Klipper/
 
 #### 需进行必要配置的内容
 
-- Klipper\MH\calibration.cfg
+- Klipper\VT-M\calibration.cfg
 
 ```base
 [tools_calibrate]
@@ -165,7 +165,7 @@ variable_tool_count: 4      # 工具总数 (例如0, 1，共2个)
 
 
 
-- Klipper\MH\extruder.cfg
+- Klipper\VT-M\extruder.cfg
 
 需配置多个热端的 heater_pin 和 sensor_pin
 
@@ -178,11 +178,11 @@ PID_CALIBRATE HEATER=extruder2 TARGET=245
 PID_CALIBRATE HEATER=extruder3 TARGET=245
 ```
 
-- Klipper\MH\fan.cfg
+- Klipper\VT-M\fan.cfg
 
 对热端风扇和模型散热风扇进行配置
 
-- Klipper\MH\macro.cfg
+- Klipper\VT-M\macro.cfg
 
 需检查是否有同名宏，如果有请在原来的位置删掉或注释
 检查暂停位置是否与停靠坞坐标冲突
@@ -197,7 +197,7 @@ gcode:
 ```
 
 
-- Klipper\MH\swap.cfg
+- Klipper\VT-M\swap.cfg
 
 配置热端传感器引脚
 ```base
@@ -264,7 +264,7 @@ mesh_max: 280, 280
 
 - Klipper\printer.cfg
 
-1. 引入 `[include MH/*.cfg]` 注意需在 `[include mainsail.cfg]` 下方，以便保证所有宏被正确重写。
+1. 引入 `[include VT-M/*.cfg]` 注意需在 `[include mainsail.cfg]` 下方，以便保证所有宏被正确重写。
 
 2. 重写 PRINT_START 和 PRINT_END 宏
 
